@@ -11,8 +11,9 @@
 * Saneela Khatoon
 ## Project Details
 
-**Website:** (https://elianaozin.github.io/)
-**Repo:** (elianaozin/elianaozin.github.io)
+**Website:** https://elianaozin.github.io/
+
+**Repo:** https://github.com/elianaozin/elianaozin.github.io
 
 
 ## Storyline
