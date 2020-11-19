@@ -39,10 +39,8 @@ The winner becomes the sole owner of the last human spaceship on Earth\.
 The game will be a 2D side scrolling game using pixel art style graphics\. 
 
 ## Credits
-Font Name: Octin Vintage Free
 
-Author: [Typodermicfonts](https://typodermicfonts.com/)
-
-License:
-* [Desktop License](https://www.fontspring.com//lic/jcefupvyrh)
-
+What is being credited for | Author | License
+---- | ----- | -----
+Octin Vintage Free Font | [Typodermicfonts](https://typodermicfonts.com/) | [Desktop License](https://www.fontspring.com//lic/jcefupvyrh)
+[C# Multiplayer Networking](https://www.youtube.com/watch?v=uh8XaC0Y5MA&list=PLXkn83W0QkfnqsK8I0RAz5AbUxfg3bOQ5) | [Tom Weiland](https://www.youtube.com/c/TomWeiland) | [MIT License](https://github.com/tom-weiland/tcp-udp-networking/blob/master/Licence.txt)
