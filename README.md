@@ -44,3 +44,7 @@ What is being credited for | Author | License
 ---- | ----- | -----
 Octin Vintage Free Font | [Typodermicfonts](https://typodermicfonts.com/) | [Desktop License](https://www.fontspring.com//lic/jcefupvyrh)
 [C# Multiplayer Networking](https://www.youtube.com/watch?v=uh8XaC0Y5MA&list=PLXkn83W0QkfnqsK8I0RAz5AbUxfg3bOQ5) | [Tom Weiland](https://www.youtube.com/c/TomWeiland) | [MIT License](https://github.com/tom-weiland/tcp-udp-networking/blob/master/Licence.txt)
+
+Chakra Petch font
+
+8-bit arcade kid \(in game background music\)|[Fesliyan Studios] https://www.fesliyanstudios.com/royalty-free-music/download/arcade-kid/618 |Royalty free music from Fesliyan Studios
