@@ -8,6 +8,7 @@ public class PlayerWeaponAimHandler : MonoBehaviour
     private Transform transformAim;
     private Transform whereToFireFromTransform;
     private float meleeDamage;
+    private GameObject newWeapon;
     
     public event EventHandler<onFiringArgs> onFiring;
     public class onFiringArgs : EventArgs
@@ -33,32 +34,22 @@ public class PlayerWeaponAimHandler : MonoBehaviour
         checkToExpireWeapon();
     }
 
-    //Handles collision between weapon and player in the case of melee weapons
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-        //Only inflicts damage on this collision if weapon is melee
-        if (collision.CompareTag("Player") && Input.GetMouseButtonDown(0) && isMelee())
-        {
-            player.getPlayerProperties().damage(meleeDamage);
-        }
-    }
-
-
     //Handles shooting event invoking conditions
     private void handleShooting()
     {
-        if (Input.GetMouseButtonDown(0) && GetComponent<PlayerWeaponShootingHandler>().getCurrentAmmo() > 0 && isMelee() == false)
+        if (whereToFireFromTransform != null)
         {
-            
-            Vector3 mousePos = getWorldMousePos();
-            onFiring?.Invoke(this, new onFiringArgs
+            if (Input.GetMouseButtonDown(0) && GetComponent<PlayerWeaponShootingHandler>().getCurrentAmmo() > 0 && isMelee() == false)
             {
-                weaponEndPointPos = whereToFireFromTransform.position,
-                shootPos = mousePos
-            });
-            Debug.Log(whereToFireFromTransform.position);
-        } 
+                Vector3 mousePos = getWorldMousePos();
+                onFiring?.Invoke(this, new onFiringArgs
+                {
+                    weaponEndPointPos = whereToFireFromTransform.position,
+                    shootPos = mousePos
+                });
+                Debug.Log(GetComponent<PlayerWeaponShootingHandler>().getCurrentAmmo());
+            }
+        }
     }
     //Handles aiming mechanics ensuring Weapon is alligned with the mouse position
     private void handleAiming()
@@ -86,28 +77,26 @@ public class PlayerWeaponAimHandler : MonoBehaviour
         return worldPos;
     }
 
-    //instantiates a clone of the weapon picked up off the ground
-    public void updateWeapon(GameObject newWeapon, Sprite weaponLook)
+    //changes the position of the weapon from the ground to the empty gameObject on the player
+    public void updateWeapon(GameObject newWeapon)
     {
-        Instantiate(newWeapon, transformAim.position,Quaternion.identity,transformAim);
-        Debug.Log(newWeapon.transform.Find("WhereToFireFrom").position);
-        whereToFireFromTransform = newWeapon.transform.Find("WhereToFireFrom");
+        if (newWeapon.CompareTag("weapon"))
+        {
+            this.newWeapon = newWeapon;
+            newWeapon.transform.SetParent(transformAim);
+            newWeapon.transform.position = transformAim.position;
+            whereToFireFromTransform = newWeapon.transform.Find("WhereToFireFrom");
+        }
     }
 
    //Checks to see if the weapon is melee
     private bool isMelee()
     {
-        if (transformAim.Find("weapon1(Clone)")) {
+        if (transformAim.Find("weapon1")) {
             return true;
         } else {
             return false;
         }
-    }
-
-    //Deletes all new weapons that enter the Aim game object slots
-    public void enforceCurrentWeapon()
-    {
-        Destroy(transformAim.GetChild(0));
     }
 
     //Checks if there's a weapon in the Aim game object
@@ -131,15 +120,17 @@ public class PlayerWeaponAimHandler : MonoBehaviour
             if (isMelee())
             {
                 //Removes the melee weapon after 8 seconds 
-                Destroy(gameObject.transform.Find("Aim").Find("weapon1(Clone)").gameObject, 8f);
+                Destroy(newWeapon, 8f);
             }
             else
             {
+                
                 if (GetComponent<PlayerWeaponShootingHandler>().getCurrentAmmo() == 0)
                 {
                     //Removes the weapon after it runs out of bullets 
-                    Destroy(gameObject.transform.Find("Aim").Find("gum(Clone)").gameObject);
+                    Destroy(newWeapon);
                 }
+                
             }
         } 
     }

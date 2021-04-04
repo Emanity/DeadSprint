@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class PlayerProperties
         player = _player;
         health = 100;
         stamina = 100;
-        staminaRegenRate = 0.1f; //must choose wisely on how much it regens per tick
+        staminaRegenRate = 0.3f; //must choose wisely on how much it regens per tick
         hasEquipped = false;
         weaponEquipped = null;
     }
@@ -30,7 +31,7 @@ public class PlayerProperties
     public void damage(float _damage)
     {
         //if (!matchID(_player)) return;
-        stamina -= _damage;
+        health -= _damage;
         //!sync! send damage update to other clients on PUN
     }
 
@@ -42,9 +43,8 @@ public class PlayerProperties
     }
 
     //note: we dont have a sprint mechanic yet
-    public void useStamina(Player _player, float _staminaUsed)
+    public void useStamina(float _staminaUsed)
     {
-        if (!matchID(_player)) return;
         stamina -= _staminaUsed;
     }
 
@@ -59,10 +59,14 @@ public class PlayerProperties
 
     public void regenStamina()
     {
-        stamina = stamina + staminaRegenRate;
-        if (stamina > 100)
+        stamina += staminaRegenRate;
+        if (stamina > 100f)
         {
-            stamina = 100;
+            stamina = 100f;
+        }
+        if (stamina < 0f)
+        {
+            stamina = 0f;
         }
     }
 
@@ -124,12 +128,36 @@ public class PlayerProperties
 
     public bool isPlayerDead()
     {
-        if (stamina <= 0)
+        if (health <= 0)
         {
+            health = 100;
             stamina = 100;
             return true;
         }
 
         return false;
     }
+
+    #region
+
+    [PunRPC]
+    private void syncPlayerHealth(Player _player, float _damage)
+    {
+        damage(_player, _damage);
+    }
+
+    [PunRPC]
+    private void syncPlayerStamina(Player _player, float _stamina)
+    {
+
+    }
+
+    [PunRPC]
+    private void syncPlayerAmmo(Player _player, int _ammo)
+    {
+        
+    }
+
+
+    #endregion
 }

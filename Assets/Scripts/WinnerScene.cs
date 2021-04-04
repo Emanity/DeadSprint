@@ -12,8 +12,8 @@ public class WinnerScene : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        
-        winnerText.text = RoomManager.Instance.getWinnerPlayer().NickName;
+
+        winnerText.text = RoomManager.Instance.getWinners()[0];
     }
 
     // Update is called once per frame

@@ -20,7 +20,6 @@ public class PlayerWeaponShootingHandler : MonoBehaviour
 
     private void Pwdah_onFiring(object sender, PlayerWeaponAimHandler.onFiringArgs e)
     {
-        Debug.Log("shooting");
         //Spawns the bullet
         Transform gumTransform =  Instantiate(pfGum, e.weaponEndPointPos, Quaternion.identity);
         //decrement ammunition every time gum is instantiated

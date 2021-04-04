@@ -12,6 +12,19 @@ public class WinnerSceneScript : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     public void NextScene()
     {
-        PhotonNetwork.LoadLevel(3);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if(SceneManager.GetActiveScene().buildIndex == 2)
+            {
+                PhotonNetwork.LoadLevel(3);
+            } 
+            
+        }
+
+        if(SceneManager.GetActiveScene().buildIndex == 5)
+        {
+            Application.Quit();
+        }
+        
     }
 }

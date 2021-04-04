@@ -59,7 +59,7 @@ public class PlayerManager : MonoBehaviourPunCallbacks
         {
             string _s = "Player" + (playerChosenPrefabIndex[photonView.Owner] + 1);
             Debug.Log("Instantiated Player Controller");
-            player = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", _s), new Vector3(-8f, -2.5f), Quaternion.identity);
+            player = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", _s), new Vector3(-7f, -2.5f), Quaternion.identity);
         }
     }
 }

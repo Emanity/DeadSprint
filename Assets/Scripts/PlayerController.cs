@@ -25,16 +25,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public Animator animator;
 
     public bool isFroze;
-    
 
-    PhotonView photonView;
+    private bool jumpDisabled;
     private PlayerProperties playerProperties;
 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        photonView = GetComponent<PhotonView>();
         playerProperties = new PlayerProperties(PhotonNetwork.LocalPlayer);
     }
 
@@ -90,31 +88,46 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             attack(other);
         }
-        if (other.gameObject.tag.Equals("death"))
+        if (other.gameObject.tag.Equals("death")) //some reason this does not work
         {
             playerProperties.damage(100);
         }
 
         if (other.gameObject.tag.Equals("gum"))
         {
-            playerProperties.damage(80);
+            Debug.Log($"[[[]]]====-");
+            playerProperties.useStamina(80);
             isFroze = true;
             animator.SetBool("frozen", true);
-            other.gameObject.SetActive(false);
-            StartCoroutine("waitFrozenTime");
+            Destroy(other.gameObject);
+            StartCoroutine(waitFrozenTime());
         }
 
         if (other.gameObject.tag.Equals("weapon"))
         {
-            playerProperties.setWeapon(other.gameObject.GetComponent<Weapon>());
-            Debug.Log("weapon set, damage: " + playerProperties.getCurrentWeapon().getDamage());
-            other.gameObject.SetActive(false);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("weaponEquip", RpcTarget.Others, other.gameObject.GetInstanceID());
+                Weapon weapon = other.gameObject.GetComponent<Weapon>();
+                playerProperties.setWeapon(weapon);
+                weapon.gameObject.SetActive(false);
+            }
+        }
+
+        if (other.gameObject.tag.Equals("Laser"))
+        {
+            playerProperties.damage(25);
+        }
+
+        if (other.gameObject.tag.Equals("Platforms"))
+        {
+            jumpDisabled = false;
         }
     }
 
     IEnumerator waitFrozenTime()
     {
-        yield return new WaitForSecondsRealtime(5f);
+        yield return new WaitForSecondsRealtime(2.5f);
         isFroze = false;
         animator.SetBool("frozen", false);
     }
@@ -123,20 +136,27 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void move()
     {
+        Debug.Log($"player is frozen? {isFroze}");
         if(playerProperties.getStamina() > 0 && !isFroze)
         {
             float x = Input.GetAxisRaw("Horizontal"); //x = key A (-1) , key D (1)
-
             if (x == -1)
             {
                 transform.rotation = new Quaternion(0f, -180f, 0f, 0f);
+                animator.SetBool("frozen", false);
                 animator.SetBool("isJumping", false);
             }
 
             if (x == 1)
             {
                 transform.rotation = new Quaternion(0f, 0f, 0f, 0f);
+                animator.SetBool("frozen", false);
                 animator.SetBool("isJumping", false);
+            }
+
+            if (x == 0)
+            {
+                animator.SetBool("frozen", true);
             }
 
 
@@ -150,15 +170,16 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void Jump()
     {
+        if (jumpDisabled) return;
+
         CheckIfGrounded();
-        if (photonView.IsMine && !isFroze && Input.GetKeyDown(KeyCode.W) && playerProperties.getStamina() > 0)
+        if (photonView.IsMine && !isFroze && Input.GetKeyDown(KeyCode.W) && playerProperties.getStamina() > 20f)
         {
             //Debug.Log("jump happened");
             animator.SetBool("isJumping", true);
             rb.velocity = new Vector2(rb.velocity.x, jumpPower);
-            
-            
-            
+            playerProperties.useStamina(20);
+
         } 
     }
 
@@ -200,9 +221,26 @@ public class PlayerController : MonoBehaviourPunCallbacks
     private void isPlayerDead()
     {
 
-        if (playerProperties.isPlayerDead() || (photonView.IsMine && Input.GetKeyDown(KeyCode.R)))
+        if (playerProperties.isPlayerDead() || gameObject.transform.position.x <= -14f)
         {
-            gameObject.transform.position = new Vector3(-8f,-2.5f);
+            gameObject.transform.position = new Vector3(-7f, -2.5f);
         }
     }
+
+    [PunRPC]
+    private void weaponEquip(int _test)
+    {
+        GameObject[] _weaponObjects = GameObject.FindGameObjectsWithTag("weapon");
+        for (int i = 0; i < _weaponObjects.Length; i++)
+        {
+            if (_weaponObjects[i].GetInstanceID().Equals(_test))
+            {
+                Debug.Log($"weapon instance id: {_test}");
+                playerProperties.setWeapon(_weaponObjects[i].gameObject.GetComponent<Weapon>());
+                Debug.Log("weapon set, damage: " + playerProperties.getCurrentWeapon().getDamage());
+                _weaponObjects[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
 }

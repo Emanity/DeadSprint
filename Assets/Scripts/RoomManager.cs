@@ -12,6 +12,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public static RoomManager Instance;
     private GameObject playerManagerObject;
     private Player winnerPlayer;
+    private String[] winningPlayers;
     private List<int> disqualifiedPlayersActNumber;
     private List<string> authenticatedUserIDList = new List<string>();
 
@@ -58,6 +59,27 @@ public class RoomManager : MonoBehaviourPunCallbacks
         return count;
     }
 
+    public String[] getWinners()
+    {
+        return winningPlayers;
+
+        /*
+        if (currentScene.buildIndex == 2)
+        {
+            return winningPlayers;
+        } else
+        {
+            return winningPlayers2;
+        }
+        */
+        
+    }
+
+    public void setWinners(string[] _winnerArray)
+    {
+        winningPlayers = _winnerArray;
+    }
+
     public void playerDisqualified(Player _player)
     {
         disqualifiedPlayersActNumber.Add(_player.ActorNumber);
@@ -78,7 +100,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (currentScene.buildIndex == 1)
         {
             winnerPlayer = _winnerPlayer;
-
+            winningPlayers[count] = _winnerPlayer.NickName;
             LeaderBoard.Instance.addToBoard(_winnerPlayer);
             count++;
             Debug.Log("winner added to list" + " and the current count is: " + count);
@@ -95,7 +117,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (scene.buildIndex == 1)
         {
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "GameManager"), Vector3.zero, Quaternion.identity);
-
+            winningPlayers = new String[PhotonNetwork.CurrentRoom.PlayerCount];
             currentScene = scene;
             instantiatePlayerManager();
         }
@@ -123,16 +145,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            StartCoroutine(delay()); //Add a delay
-            if (String.Equals(_roomCode, roomCode))
-            {
-                photonView.RpcSecure("authenticateSuccess", RpcTarget.All, true, _player);
-                authenticatedUserIDList.Add(_player.UserId);
-            }
-            else
-            {
-                PhotonNetwork.CloseConnection(_player);
-            }
+            StartCoroutine(authenticationDelay(_roomCode,_player)); //Add a delay
         }
     }
 
@@ -157,9 +170,18 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
     }
 
-    IEnumerator delay()
+    IEnumerator authenticationDelay(string _roomCode, Player _player)
     {
         yield return new WaitForSeconds(5.0f);
+        if (String.Equals(_roomCode, roomCode))
+        {
+            photonView.RpcSecure("authenticateSuccess", RpcTarget.All, true, _player);
+            authenticatedUserIDList.Add(_player.UserId);
+        }
+        else
+        {
+            PhotonNetwork.CloseConnection(_player);
+        }
     }
 
     [PunRPC]

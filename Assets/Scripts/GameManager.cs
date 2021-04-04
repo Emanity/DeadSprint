@@ -6,6 +6,7 @@ using Photon.Realtime;
 using UnityEngine;
 using Photon.Pun;
 using ExitGames.Client.Photon;
+using UnityEngine.SceneManagement;
 
 /*
  * Everything should be updated from the RoomManager
@@ -13,16 +14,20 @@ using ExitGames.Client.Photon;
  */
 public class GameManager : MonoBehaviourPun
 {
+
     private bool isWinner;
     private bool gameFinished;
     public static GameManager Instance;
 
     private bool isReady;
 
+    private Scene currentScene;
+
     private int total;
 
     private const byte SYNC_WINNER_EVENT_CODE = 0;
     private const byte SYNC_EXTINCTION_EVENT_CODE = 1;
+    private const byte SYNC_WINNERS_EVENT_CODE = 2;
 
     private void Awake()
     {
@@ -37,6 +42,7 @@ public class GameManager : MonoBehaviourPun
 
         resetVariables();
         Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount);
+
         
     }
 
@@ -44,13 +50,25 @@ public class GameManager : MonoBehaviourPun
     {
         if (PhotonNetwork.IsMasterClient) //GameManager will only be performed on master client except for receiving RaiseEvents
         {
+            GameObject[] gumObjects = GameObject.FindGameObjectsWithTag("gum");
+            if (gumObjects.Length > 0)
+            {
+                for (int i = 0; i < gumObjects.Length; i++)
+                {
+                    if (gumObjects[i].transform.position.y <= -14)
+                    {
+                        PhotonNetwork.Destroy(gumObjects[i]);
+                    }
+                }
+            }
+
             if (gameFinished)
             {
                 return;
             }
             checkIfPlayersFinished();
             //rollExtinctionEvent();
-            //demoRollExtinctionEvent();
+            demoRollExtinctionEvent();
         }
     }
 
@@ -80,25 +98,34 @@ public class GameManager : MonoBehaviourPun
             Debug.Log($"event code: {obj.Code}");
             if (obj.Code == SYNC_EXTINCTION_EVENT_CODE)
             {
-                /*
                 object[] data = (object[])obj.CustomData;
-                string extinctionEvent = (string)data[0];
-                if (extinctionEvent.Equals("Kill"))
+                int extinctionEvent = (int)data[0];
+                if (extinctionEvent == 1)
                 {
-                    ExtinctionEvent.Kill.execute();
+                    ExtinctionEvent.isExecuting = true;
+                    ExtinctionEvent.GumAttack.execute();
                 }
-                if (extinctionEvent.Equals("Laser"))
+                if (extinctionEvent == 2)
                 {
-                    ExtinctionEvent.Laser.execute();
+                    ExtinctionEvent.isExecuting = true;
+                    //ExtinctionEvent.Laser.execute();
                 }
-                if (extinctionEvent.Equals("Blizzard"))
+                if (extinctionEvent == 3)
                 {
-                    ExtinctionEvent.Blizzard.execute();
+                    ExtinctionEvent.isExecuting = true;
+                    //ExtinctionEvent.Storm.execute();
                 }
-                */
+                StartCoroutine(extinctionCountDown());
             }
         }
     }
+
+    IEnumerator extinctionCountDown()
+    {
+        yield return new WaitForSeconds(25f);
+        ExtinctionEvent.isExecuting = false;
+    }
+
 
     public bool getReadyStatus()
     {
@@ -108,10 +135,18 @@ public class GameManager : MonoBehaviourPun
     private void playerFinished(Player _player)
     {
         Debug.Log($"{_player} finished");
-        if (!isWinner || !photonView.IsMine)
+        if (!isWinner)
         {
-            //RoomManager.Instance.setWinnerPlayer(_player);
+            /*
+            RoomManager.Instance.setWinnerPlayer(_player);
+            //to update other client's board that have already finished
+            string[] winnerArray = RoomManager.Instance.getWinners();
+            object[] data = new object[winnerArray.Length];
+            winnerArray.CopyTo(data, 0);
+            sendRaiseEvent(SYNC_WINNERS_EVENT_CODE, data);
+            */
         }
+
         isWinner = true;
         if (photonView.IsMine && RoomManager.Instance.getCount() == total) //example of why checks are important remove this and have 2 players, it should give a warning which does not sync scene on master client
         {
@@ -119,6 +154,11 @@ public class GameManager : MonoBehaviourPun
             isReady = true;
             Debug.Log("ready to move to the next level");
 
+        }
+        currentScene = SceneManager.GetActiveScene();
+        if (photonView.IsMine && currentScene.buildIndex == 4)
+        {
+            PhotonNetwork.LoadLevel(5);
         }
     }
 
@@ -148,7 +188,8 @@ public class GameManager : MonoBehaviourPun
                 if (_playerObjects.Length == 1)
                 {
                     gameFinished = true;
-                    RoomManager.Instance.playerDisqualified(player);
+                    //RoomManager.Instance.playerDisqualified(player);
+                    ExtinctionEvent.isExecuting = false;
                 }
                 playerFinished(player);
             }
@@ -157,14 +198,13 @@ public class GameManager : MonoBehaviourPun
 
     }
 
-    /* this won't work on your current version
     private void demoRollExtinctionEvent() //only for demo purposes
     {
         if (Input.GetKey(KeyCode.Q))
         {
             //photonView.RPC("ReceiveExtinctionEvent", RpcTarget.All, true);
-            string extinctionEvent = ExtinctionEvent.rollEvent();
-            if (extinctionEvent.Length != 0)
+            int extinctionEvent = ExtinctionEvent.rollEvent();
+            if (extinctionEvent != 0)
             {
                 object[] data = new object[] { extinctionEvent };
                 sendRaiseEvent(SYNC_EXTINCTION_EVENT_CODE, data);
@@ -176,20 +216,21 @@ public class GameManager : MonoBehaviourPun
 
     private void rollExtinctionEvent()
     {
-        string extinctionEvent = ExtinctionEvent.rollEvent();
-        if (extinctionEvent.Length != 0)
+        int extinctionEvent = ExtinctionEvent.rollEvent();
+        if (extinctionEvent != 0)
         {
             object[] data = new object[] { extinctionEvent };
             sendRaiseEvent(SYNC_EXTINCTION_EVENT_CODE, data);
         }
     }
-    */
 
     private void sendRaiseEvent(byte _eventCode, object[] _data)
     {
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent(_eventCode, _data, raiseEventOptions, SendOptions.SendReliable);
     }
+
+    /*
     private void extinctionEvent(bool _extinctionEventBool)
     {
         if (_extinctionEventBool)
@@ -203,4 +244,5 @@ public class GameManager : MonoBehaviourPun
             }
         }
     }
+    */
 }

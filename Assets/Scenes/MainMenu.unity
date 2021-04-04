@@ -528,7 +528,6 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_ShouldActivateOnSelect: 1
 --- !u!114 &127303494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4068,7 +4067,6 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_ShouldActivateOnSelect: 1
 --- !u!114 &1045561152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4364,7 +4362,6 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_ShouldActivateOnSelect: 1
 --- !u!114 &1106871624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4791,7 +4788,6 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_ShouldActivateOnSelect: 1
 --- !u!114 &1213765233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6018,7 +6014,6 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_ShouldActivateOnSelect: 1
 --- !u!114 &1609539944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8084,7 +8079,6 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
-  m_ShouldActivateOnSelect: 1
 --- !u!114 &2010859468
 MonoBehaviour:
   m_ObjectHideFlags: 0

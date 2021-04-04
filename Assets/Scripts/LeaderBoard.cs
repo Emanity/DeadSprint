@@ -34,7 +34,7 @@ public class LeaderBoard : MonoBehaviourPunCallbacks
     }
     private void Start()
     {
-        Instantiate(ldrListItemPrefab, ldrListContent).GetComponent<LdrListItem>().SetUp(RoomManager.Instance.getWinnerPlayer().NickName);
+        //Instantiate(ldrListItemPrefab, ldrListContent).GetComponent<LdrListItem>().SetUp(RoomManager.Instance.getWinnerPlayer().NickName);
 
     }
     private void FixedUpdate()
@@ -46,10 +46,25 @@ public class LeaderBoard : MonoBehaviourPunCallbacks
     {
         Debug.Log("addtoboard method");
 
-        Instantiate(ldrListItemPrefab, ldrListContent).GetComponent<LdrListItem>().SetUp(_player.NickName);
+        updateBoard();
+
         winners = RoomManager.Instance.getCount();
         Debug.Log("player added to board"+ "count:" + RoomManager.Instance.getCount() );
         
+    }
+
+    //had to create a new function as I needed this code to update the board
+    public void updateBoard()
+    {
+        foreach (Transform child in ldrListContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        for (int i = 0; i < RoomManager.Instance.getWinners().Length; i++)
+        {
+            Instantiate(ldrListItemPrefab, ldrListContent).GetComponent<LdrListItem>().SetUp(RoomManager.Instance.getWinners()[i]);
+        }
     }
 
 }

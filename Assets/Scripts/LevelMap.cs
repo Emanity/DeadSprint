@@ -21,11 +21,15 @@ public class LevelMap : MonoBehaviourPunCallbacks
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        startGameButton.SetActive(PhotonNetwork.IsMasterClient);
+        startGameButton.SetActive(newMasterClient.IsMasterClient);
     }
 
     public void StartGame()
     {
-        PhotonNetwork.LoadLevel(4);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel(4);
+        }
+        
     }
 }

@@ -17,6 +17,12 @@ public class PlayerInterpolation : MonoBehaviourPunCallbacks, IPunObservable
     private const byte PLAYER_POSITION_CHANGE_EVENT = 0;
     private float distance;
     private Player sender;
+    private PlayerController p;
+
+    private void Awake()
+    {
+        p = gameObject.GetComponent<PlayerController>();
+    }
 
     private void FixedUpdate()
     {
@@ -29,7 +35,8 @@ public class PlayerInterpolation : MonoBehaviourPunCallbacks, IPunObservable
         //Debug.Log($"current: {pos}");
         float distance = Vector3.Distance(transform.position, pos);
 
-        if (distance > 10f && PhotonNetwork.IsMasterClient)
+        Debug.Log($"yoyoyo: {pos.x != -7f}, {pos.x}");
+        if (distance > p.speed && PhotonNetwork.IsMasterClient && pos.x != -7f) //player respawn is an exception
         {
             PhotonNetwork.CloseConnection(sender);
         }
