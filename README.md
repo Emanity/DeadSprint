@@ -9,6 +9,7 @@
 * Myra Syed
 * Maisha Zaman
 * Saneela Khatoon
+* Ayoub Djeffal
 ## Project Details
 
 **Website:** https://deadsprint.space/
@@ -22,7 +23,7 @@ It is 2021 and all is well in the world\.
 
 Until someone decided to steal Canada’s supply of Maple Syrup\.
 
-Now the world is on the cusp of extinction \– Canada having waged war on the world for taking their syrup\. Elon  Musk has escaped to his Super Secret Colony on Mars but in his haste had left behind ONE spaceship\.
+Now the world is on the cusp of extinction – Canada having waged war on the world for taking their syrup\. Elon  Musk has escaped to his Super Secret Colony on Mars but in his haste had left behind ONE spaceship\.
 
 A group of survivor's race against each other to get to the last available spaceship in order to leave the hell that Earth has become and find a place to live for themselves out in the stars\. Each player will have to run through the map in the hopes of reaching the end before any of the other players\.
 
@@ -43,6 +44,6 @@ The game will be a 2D side scrolling game using pixel art style graphics\.
 What is being credited for | Author | License
 ---- | ----- | -----
 Octin Vintage Free Font | [Typodermicfonts](https://typodermicfonts.com/) | [Desktop License](https://www.fontspring.com//lic/jcefupvyrh)
-[C# Multiplayer Networking](https://www.youtube.com/watch?v=uh8XaC0Y5MA&list=PLXkn83W0QkfnqsK8I0RAz5AbUxfg3bOQ5) | [Tom Weiland](https://www.youtube.com/c/TomWeiland) | [MIT License](https://github.com/tom-weiland/tcp-udp-networking/blob/master/Licence.txt)
-8-bit arcade kid \(in game background music\) | [Fesliyan Studios] https://www.fesliyanstudios.com/royalty-free-music/download/arcade-kid/618 | Royalty free music from Fesliyan Studios
-Chakra Petch font
+Chakra Petch font | [Cadson Demak](https://font.cadsondemak.com/foundry/) | [Open Font License](https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL)
+
+Other references can be found in the Project Evaluation Report\.
