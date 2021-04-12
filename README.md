@@ -13,7 +13,7 @@
 
 **Website:** https://deadsprint.space/
 
-**Repo:** https://github.com/elianaozin/elianaozin.github.io
+**Repo:** https://github.com/inumaisha/deadsprintwebsite.io
 
 
 ## The Concept
